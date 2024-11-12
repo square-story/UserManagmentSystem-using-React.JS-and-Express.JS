@@ -13,6 +13,12 @@ exports.registerUser = async (req, res) => {
             return res.status(400).json({ success: false, message: 'User already registered' });
         }
 
+        // Validate email format (using regex for simplicity)
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ success:false,message: 'Invalid email format' });
+        }
+
         // Create new user
         const hashedPassword = await bcrypt.hash(password, 10);
         user = new User({ username, email, password: hashedPassword });
@@ -38,11 +44,11 @@ exports.loginUser = async (req, res) => {
     try {
         let user = await User.findOne({email});
         if(!user){
-            return res.status(400).json({msg:'User Not Found'})
+            return res.status(400).json({message:'User Not Found'})
         }
         const isMatch = await bcrypt.compare(password,user.password);
         if(!isMatch){
-            return res.status(400).json({msg:'Invalid Password'})
+            return res.status(400).json({message:'Invalid Password'})
         }
         const payload = {userId:user._id};
         const token = jwt.sign(payload,process.env.JWT_SECRET,{expiresIn:'1h'})
