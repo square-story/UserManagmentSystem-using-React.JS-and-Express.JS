@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useDispatch } from "react-redux";
-import { loginUser } from "../../services/authService";
+import { loginUser, registerUser } from "../../services/authService";
 import { setUser } from "../../features/authSlice";
 import './Login.css'
 
@@ -8,16 +8,20 @@ const Login = () => {
     const [signState, setSignState] = useState('Sign In')
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [name, setName] = useState('')
+    const [username, setUsername] = useState('')
     const dispatch = useDispatch();
 
-    const handleLogin = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const data = await loginUser({ email, password })
-            dispatch(setUser({ user: data.user, token: data.token }))
-            // Redirect to dashboard or home page
-            console.log("User logged in successfully")
+            if (signState === 'Sign In') {
+                const data = await loginUser({ email, password });
+                dispatch(setUser({ user: data.user, token: data.token }));
+            } else {
+                // Register User
+                const data = await registerUser({ email, password, username });
+                dispatch(setUser({ user: data.user, token: data.token }));
+            }
         } catch (error) {
             console.error("An error occurred while logging in', " + error);
         }
@@ -31,10 +35,10 @@ const Login = () => {
                             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                                 {`${signState} to your account`}
                             </h1>
-                            <form className="space-y-4 md:space-y-6" onClick={handleLogin}>
+                            <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
                                 {signState === 'Sign Up' ? <div>
-                                    <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your Name</label>
-                                    <input type="email" name="email" id="email" value={name} onChange={(e) => setName(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="eg:Walter White" required="" />
+                                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your Name</label>
+                                    <input type="text" name="email" id="email" value={username} onChange={(e) => setUsername(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="eg:Walter White" required="" />
                                 </div> : <></>}
                                 <div>
                                     <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
@@ -60,12 +64,3 @@ const Login = () => {
 }
 
 export default Login
-
-
-/**
- * <form onClick={handleLogin}>
-                <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                <button type="submit">Login</button>
-            </form>
- */

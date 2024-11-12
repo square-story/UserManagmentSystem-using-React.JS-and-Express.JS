@@ -5,22 +5,33 @@ const jwt = require('jsonwebtoken');
 
 
 exports.registerUser = async (req, res) => {
-    const {username,email,password} = req.body;
+    const { username, email, password } = req.body;
     try {
-        let user = await User.findOne({email})
-        if(user){
-            return res.status(400).json({msg:'User Already Registered'})
+        // Check if user already exists
+        let user = await User.findOne({ email });
+        if (user) {
+            return res.status(400).json({ success: false, message: 'User already registered' });
         }
-        user = new User({username, email, password:await bcrypt.hash(password,10)})
+
+        // Create new user
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user = new User({ username, email, password: hashedPassword });
         await user.save();
-        const payload = {userId:user._id};
-        const token = jwt.sign(payload,process.env.JWT_SECRET,{expiresIn:'1h'})
-        res.status(201).json({token});
+
+        // Generate JWT token
+        const payload = { userId: user._id };
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        res.status(201).json({
+            success: true,
+            message: 'Registration successful',
+            data: { user: { _id: user._id, username: user.username, email: user.email }, token }
+        });
     } catch (error) {
         console.error(error.message || error);
-        res.status(500).send('Server Error')
+        res.status(500).json({ success: false, message: 'Server error' });
     }
-}
+};
 
 exports.loginUser = async (req, res) => {
     const {email,password} = req.body;
