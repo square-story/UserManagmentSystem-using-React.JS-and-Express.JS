@@ -1,0 +1,26 @@
+# Node modules and build directories
+node_modules/
+dist/
+build/
+
+# Environment variables
+.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS and editor-specific files
+.DS_Store
+.idea/
+.vscode/
+
+# Ignore the frontend build directory if using Vite or another bundler
+frontend/dist/
+frontend/build/
+
+# Ignore the backend build (if applicable)
+backend/dist/
