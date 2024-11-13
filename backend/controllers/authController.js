@@ -27,7 +27,6 @@ exports.registerUser = async (req, res) => {
         // Generate JWT token
         const payload = { userId: user._id };
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
-
         res.status(201).json({
             success: true,
             message: 'Registration successful',
@@ -42,17 +41,23 @@ exports.registerUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
     const {email,password} = req.body;
     try {
-        let user = await User.findOne({email});
-        if(!user){
-            return res.status(400).json({message:'User Not Found'})
+        const isAdmin = email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD;
+        let user;
+        if(!isAdmin) {
+            user = await User.findOne({email});
+            if(!user){
+                return res.status(400).json({message:'User Not Found'})
+            }
+            const isMatch = await bcrypt.compare(password,user.password);
+            if(!isMatch){
+                return res.status(400).json({message:'Invalid Password'})
+            }
         }
-        const isMatch = await bcrypt.compare(password,user.password);
-        if(!isMatch){
-            return res.status(400).json({message:'Invalid Password'})
-        }
-        const payload = {userId:user._id};
+        const payload = {userId: isAdmin ? 'admin' : user._id,isAdmin};
+
+
         const token = jwt.sign(payload,process.env.JWT_SECRET,{expiresIn:'1h'})
-        res.json({token});
+        res.json({token,isAdmin});
     } catch (error) {
         console.error(error.message || error);
         res.status(500).send('Server Error')

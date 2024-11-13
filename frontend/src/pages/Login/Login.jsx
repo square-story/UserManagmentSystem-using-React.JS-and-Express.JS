@@ -17,9 +17,11 @@ const Login = () => {
 
     useEffect(() => {
         const token = localStorage.getItem("token");
+        const isAdmin = localStorage.getItem("isAdmin") === 'true';
+
         if (token) {
-            // Redirect to the initial path user was trying to access, or to '/userdetails' by default
-            navigate(location.state?.from || '/userdetails');
+            const redirectPath = location.state?.from || (isAdmin ? '/dashboard' : '/userdetails');
+            navigate(redirectPath, { replace: true });
         }
     }, [navigate, location.state]);
 
@@ -35,10 +37,17 @@ const Login = () => {
                 data = await registerUser({ email, password, username });
             }
 
-            // Dispatch user data to Redux
-            dispatch(setUser({ user: data.user, token: data.token }));
+            // Store token and admin status in local storage
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("isAdmin", data.isAdmin);
 
-            navigate(location.state?.from || '/userdetails');
+            // Dispatch user data to Redux
+            dispatch(setUser({ user: data.user, token: data.token, isAdmin: data.isAdmin }));
+
+            // Redirect based on user type and origin of request
+            const defaultRedirect = data.isAdmin ? '/dashboard' : '/userdetails';
+
+            navigate(location.state?.from || defaultRedirect);
         } catch (error) {
             setErrorMessage(error.response?.data?.message || 'An unexpected error occurred');
         }

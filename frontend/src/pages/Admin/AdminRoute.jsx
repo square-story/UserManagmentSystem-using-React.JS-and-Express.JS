@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
-const ProtectedRoute = () => {
+export const AdminRoute = () => {
     const token = localStorage.getItem("token");
     const isAdmin = localStorage.getItem("isAdmin") === 'true';
     const location = useLocation();
@@ -10,13 +10,11 @@ const ProtectedRoute = () => {
         return <Navigate to="/" state={{ from: location }} replace />;
     }
 
-    if (isAdmin) {
-        // If an admin is logged in, redirect to the admin dashboard or another admin-specific route
-        return <Navigate to="/dashboard" replace />;
+    if (!isAdmin) {
+        // If user is logged in but not an admin, redirect to user dashboard or an error page
+        return <Navigate to="/userdetails" replace />;
     }
 
-    // If a regular user is logged in, render the user-specific content
+    // If authenticated and isAdmin is true, render the admin content
     return <Outlet />;
 };
-
-export default ProtectedRoute;
