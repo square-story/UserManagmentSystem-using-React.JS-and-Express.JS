@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 
 const INITIAL_STATE = {
-    token:null,
+    token:localStorage.getItem("token") || null, // Get token from local storage on load
     user:null,
 }
 
@@ -19,6 +19,7 @@ const authSlice = createSlice({
         logout:(state)=>{
             state.user = null;
             state.token = null;
+            localStorage.removeItem("token"); // Remove token from local storage on logout
         }
     }
 });

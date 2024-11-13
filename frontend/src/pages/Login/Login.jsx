@@ -1,8 +1,8 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux";
 import { loginUser, registerUser } from "../../services/authService";
 import { setUser } from "../../features/authSlice";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import './Login.css'
 
 const Login = () => {
@@ -13,6 +13,15 @@ const Login = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation(); // to get current path
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            // Redirect to the initial path user was trying to access, or to '/userdetails' by default
+            navigate(location.state?.from || '/userdetails');
+        }
+    }, [navigate, location.state]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -29,14 +38,9 @@ const Login = () => {
             // Dispatch user data to Redux
             dispatch(setUser({ user: data.user, token: data.token }));
 
-            navigate('/userdetails'); // Update with your route name
+            navigate(location.state?.from || '/userdetails');
         } catch (error) {
-            // Capture error response from backend and display it
-            if (error.response && error.response.data) {
-                setErrorMessage(error.response.data.message);
-            } else {
-                setErrorMessage('An unexpected error occurred');
-            }
+            setErrorMessage(error.response?.data?.message || 'An unexpected error occurred');
         }
     }
     return (
