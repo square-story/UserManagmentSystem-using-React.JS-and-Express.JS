@@ -57,9 +57,30 @@ exports.loginUser = async (req, res) => {
 
 
         const token = jwt.sign(payload,process.env.JWT_SECRET,{expiresIn:'1h'})
-        res.json({token,isAdmin});
+        res.json({ token, isAdmin, user: isAdmin ? null : { _id: user._id} });
     } catch (error) {
         console.error(error.message || error);
         res.status(500).send('Server Error')
     }
 }
+
+
+exports.getUserDetails = async (req, res) => {
+    try {
+        // Get the user ID from the JWT token (added to req by authMiddleware)
+        const userId = req.user.userId;
+
+        // Retrieve user details from the database
+        const user = await User.findById(userId).select('-password'); // Exclude password
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Respond with user data
+        res.json({ data: user });
+    } catch (error) {
+        console.error("Error fetching user details:", error.message || error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};

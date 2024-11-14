@@ -1,6 +1,7 @@
 const express = require('express');
 const connectDB = require('./config/db')
 const authRoutes = require('./routes/authRoutes')
+const userRoutes = require('./routes/userRoutes')
 const dotenv = require('dotenv')
 const cors = require('cors');
 
@@ -15,6 +16,8 @@ app.use(express.json());
 app.use(cors({ origin: 'http://localhost:5173' })); 
 
 app.use('/api/auth',authRoutes);
+
+app.use('/api/profile',userRoutes)
 
 const PORT = process.env.PORT || 5000;
 
