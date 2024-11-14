@@ -10,7 +10,6 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
     const profile = useSelector(state => state.profile.profile);
     const loading = useSelector(state => state.profile.loading);
     const error = useSelector(state => state.profile.error);
-    console.log(profile)
     const [editedProfile, setEditedProfile] = useState(profile);
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(profile.profileImage);
@@ -18,7 +17,7 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
     // Fetch the user details when the modal is opened
     useEffect(() => {
         setEditedProfile(profile);
-        setImagePreview(profile.profileImage);
+        setImagePreview(profile.profileImage ? `http://localhost:5000${profile.profileImage}` : ''); // Set initial preview
     }, [profile]);
 
     const handleModalChange = (e) => {
@@ -47,9 +46,10 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
                 const formData = new FormData();
                 formData.append('image', imageFile);
                 //TODO:for the upload image
-                const response = await axios.post('/api/profile/upload', formData, {
+                const response = await axios.post('http://localhost:5000/api/profile/upload', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
                     },
                 });
 
@@ -57,6 +57,8 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
             }
 
             const updatedProfile = { ...editedProfile, profileImage: uploadedImageUrl };
+
+            console.log(uploadedImageUrl)
 
             // Update the profile in Redux store
             dispatch(updateProfileData(updatedProfile));

@@ -1,10 +1,10 @@
 const User = require('../models/User');
 
-exports.updateProfile = async(req,res)=>{
+exports.updateProfile = async (req, res) => {
     try {
-        const { username, email, profileImage, github, linkedin, twitter, unsplash } = req.body;
+        const { username, email, github, linkedin, twitter, unsplash,profileImage } = req.body;
 
-        console.log(req.user, '==from update module')
+        console.log(req.user, '==from update module');
 
         // Find the authenticated user by their ID (from the JWT token)
         const user = await User.findById(req.user.userId);
@@ -17,11 +17,11 @@ exports.updateProfile = async(req,res)=>{
         // Update the user fields (we'll update only the fields that are provided)
         user.username = username || user.username;
         user.email = email || user.email;
-        user.profileImage = profileImage || user.profileImage;
         user.github = github || user.github;
         user.linkedin = linkedin || user.linkedin;
         user.twitter = twitter || user.twitter;
         user.unsplash = unsplash || user.unsplash;
+        user.profileImage = profileImage || user.profileImage;
 
         // Save the updated user
         await user.save();
@@ -32,4 +32,4 @@ exports.updateProfile = async(req,res)=>{
         console.error(error);
         res.status(500).send('Server Error');
     }
-}
+};
