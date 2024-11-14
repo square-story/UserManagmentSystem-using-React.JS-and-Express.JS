@@ -71,8 +71,8 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
 
     return (
         isModalOpen && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-white rounded-lg shadow-lg p-5 w-full max-w-lg sm:max-w-md md:max-w-sm">
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
+                <div className="bg-white rounded-lg shadow-lg p-5 w-full max-w-lg sm:max-w-md md:max-w-sm max-h-screen overflow-y-auto">
                     {loading && <p>Loading...</p>}
                     {error && <p className="text-red-500">Error: {error}</p>}
                     <h2 className="text-2xl font-bold mb-4 text-center">Edit Profile</h2>
@@ -112,71 +112,32 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
                                 className="w-full px-3 py-2 border rounded-lg"
                             />
                             {imagePreview && (
-                                <div className="mt-4">
+                                <div className="mt-4 flex justify-center">
                                     <img
                                         src={imagePreview}
                                         alt="Profile Preview"
-                                        className="w-32 h-32 object-cover rounded-full"
+                                        className="w-24 h-24 object-cover rounded-full"
                                     />
                                 </div>
                             )}
                         </div>
 
-                        {/* Social Media Links Edit Section */}
+                        {/* Social Media Links */}
                         <div className="mb-4">
                             <h3 className="text-xl font-semibold mb-2">Social Media Links</h3>
-
-                            {/* GitHub */}
-                            <div className="flex items-center mb-2">
-                                <label className="block text-gray-700 w-20">GitHub</label>
-                                <input
-                                    type="text"
-                                    name="github"
-                                    value={editedProfile.github || ''}
-                                    onChange={handleModalChange}
-                                    placeholder="Enter GitHub URL"
-                                    className="w-full px-3 py-2 border rounded-lg"
-                                />
-                            </div>
-
-                            {/* LinkedIn */}
-                            <div className="flex items-center mb-2">
-                                <label className="block text-gray-700 w-20">LinkedIn</label>
-                                <input
-                                    type="text"
-                                    name="linkedin"
-                                    value={editedProfile.linkedin || ''}
-                                    onChange={handleModalChange}
-                                    placeholder="Enter LinkedIn URL"
-                                    className="w-full px-3 py-2 border rounded-lg"
-                                />
-                            </div>
-
-                            {/* Twitter */}
-                            <div className="flex items-center mb-2">
-                                <label className="block text-gray-700 w-20">Twitter</label>
-                                <input
-                                    type="text"
-                                    name="twitter"
-                                    value={editedProfile.twitter || ''}
-                                    onChange={handleModalChange}
-                                    placeholder="Enter Twitter URL"
-                                    className="w-full px-3 py-2 border rounded-lg"
-                                />
-                            </div>
-
-                            {/* Unsplash */}
-                            <div className="flex items-center mb-2">
-                                <label className="block text-gray-700 w-20">Unsplash</label>
-                                <input
-                                    type="text"
-                                    name="unsplash"
-                                    value={editedProfile.unsplash || ''}
-                                    onChange={handleModalChange}
-                                    placeholder="Enter Unsplash URL"
-                                    className="w-full px-3 py-2 border rounded-lg"
-                                />
-                            </div>
+                            {['GitHub', 'LinkedIn', 'Twitter', 'Unsplash'].map((platform) => (
+                                <div className="flex items-center mb-2" key={platform}>
+                                    <label className="block text-gray-700 w-20">{platform}</label>
+                                    <input
+                                        type="text"
+                                        name={platform.toLowerCase()}
+                                        value={editedProfile[platform.toLowerCase()] || ''}
+                                        onChange={handleModalChange}
+                                        placeholder={`Enter ${platform} URL`}
+                                        className="w-full px-3 py-2 border rounded-lg"
+                                    />
+                                </div>
+                            ))}
                         </div>
 
                         {/* Cancel and Save Buttons */}
@@ -200,6 +161,7 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
             </div>
         )
     );
+
 };
 
 export default ProfileEditModal;
