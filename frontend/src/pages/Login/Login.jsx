@@ -56,6 +56,8 @@ const Login = () => {
             localStorage.setItem("token", data.token);
             localStorage.setItem("isAdmin", data.isAdmin);
 
+            console.log(data.token, '==token')
+
             // Dispatch user data to Redux
             dispatch(setUser({ user: data.user, token: data.token, isAdmin: data.isAdmin }));
 

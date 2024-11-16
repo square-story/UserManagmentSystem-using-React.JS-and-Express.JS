@@ -1,20 +1,14 @@
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { logout } from "../../features/authSlice";
+import AdminNavBar from "../../components/Admin/AdminNavBar"
+import ManageUsers from "../../components/Admin/ManageUsers"
+
 
 const Dashboard = () => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const handleLogout = () => {
-        dispatch(logout());
-        navigate("/");
-    }
+
     return (
-        <div>Dashboard
-            <nav>
-                <button onClick={handleLogout}>Logout</button>
-            </nav>
-        </div>
+        <>
+            <AdminNavBar />
+            <ManageUsers />
+        </>
     )
 }
 

@@ -7,7 +7,9 @@ const authMiddleware = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(decoded,'==from authmiddleware');
+        if (decoded.userId === 'admin' && decoded.isAdmin) {
+            return next();
+        }
         req.user = decoded;
         next();
     } catch (error) {

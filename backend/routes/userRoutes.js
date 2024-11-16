@@ -1,6 +1,7 @@
 const express = require('express');
 const { updateProfile } = require('../controllers/userController');
 const authMiddleware = require('../middleware/authMiddleware'); // Middleware to verify JWT token
+const {getUsers} = require('../controllers/adminController')
 const multer = require('multer');
 const path = require('path');
 
@@ -34,5 +35,7 @@ router.post('/upload', authMiddleware, upload.single('image'), (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
+
+router.get('/getUsers',authMiddleware,getUsers)
 
 module.exports = router;
