@@ -4,7 +4,6 @@ const User = require('../models/User');
 
 exports.getUsers = async (req, res) => {
     try {
-        console.log('Getting users...');
         const users = await User.find();
         return res.json(users);  // Send users as a JSON response
     } catch (error) {

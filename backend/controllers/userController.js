@@ -4,8 +4,6 @@ exports.updateProfile = async (req, res) => {
     try {
         const { username, email, github, linkedin, twitter, unsplash,profileImage } = req.body;
 
-        console.log(req.user, '==from update module');
-
         // Find the authenticated user by their ID (from the JWT token)
         const user = await User.findById(req.user.userId);
 
