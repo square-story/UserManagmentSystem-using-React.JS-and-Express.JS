@@ -5,8 +5,8 @@ const UserSchema = new mongoose.Schema({
     email:{type:String,required:true},
     password:{type:String,required:true},
     profileImage:{type:String,default:''},
-    github:{type:String,default:'https://github.com'},linkedin:{type:String,default:'https://linkedin.com'},
-    twitter:{type:String,default:'https://twitter.com'},unsplash:{type:String,default:'https://unsplash.com'}
+    github:{type:String,default:''},linkedin:{type:String,default:''},
+    twitter:{type:String,default:''},unsplash:{type:String,default:''}
 })
 
 const User = mongoose.model('User', UserSchema);

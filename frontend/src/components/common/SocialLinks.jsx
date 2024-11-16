@@ -1,23 +1,23 @@
 /* eslint-disable react/prop-types */
 
 const SocialLinks = ({ userDetails }) => {
-    // Default values for placeholders
-    const defaultLinks = {
-        github: "https://github.com",
-        linkedin: "https://linkedin.com",
-        twitter: "https://twitter.com",
-        unsplash: "https://unsplash.com",
+    // Base URLs for each social platform
+    const baseLinks = {
+        github: "https://github.com/",
+        linkedin: "https://linkedin.com/in/",
+        twitter: "https://twitter.com/",
+        unsplash: "https://unsplash.com/@",
     };
 
     // Helper function to determine if a link should be displayed
-    const shouldDisplay = (link, defaultValue) => link && link !== defaultValue;
+    const shouldDisplay = (link) => link && link.length > 0;
 
     return (
         <ul className="flex flex-row mt-2">
-            {shouldDisplay(userDetails?.github, defaultLinks.github) && (
+            {shouldDisplay(userDetails?.github) && (
                 <li className="mx-2">
                     <a
-                        href={userDetails.github}
+                        href={`${baseLinks.github}${userDetails.github}`} // Concatenate the base URL with the username
                         target="_blank"
                         aria-label="GitHub"
                         rel="noopener noreferrer"
@@ -35,10 +35,10 @@ const SocialLinks = ({ userDetails }) => {
                     </a>
                 </li>
             )}
-            {shouldDisplay(userDetails?.linkedin, defaultLinks.linkedin) && (
+            {shouldDisplay(userDetails?.linkedin) && (
                 <li className="mx-2">
                     <a
-                        href={userDetails.linkedin}
+                        href={`${baseLinks.linkedin}${userDetails.linkedin}`}
                         target="_blank"
                         aria-label="LinkedIn"
                         rel="noopener noreferrer"
@@ -56,10 +56,10 @@ const SocialLinks = ({ userDetails }) => {
                     </a>
                 </li>
             )}
-            {shouldDisplay(userDetails?.twitter, defaultLinks.twitter) && (
+            {shouldDisplay(userDetails?.twitter) && (
                 <li className="mx-2">
                     <a
-                        href={userDetails.twitter}
+                        href={`${baseLinks.twitter}${userDetails.twitter}`}
                         target="_blank"
                         aria-label="Twitter"
                         rel="noopener noreferrer"
@@ -77,10 +77,10 @@ const SocialLinks = ({ userDetails }) => {
                     </a>
                 </li>
             )}
-            {shouldDisplay(userDetails?.unsplash, defaultLinks.unsplash) && (
+            {shouldDisplay(userDetails?.unsplash) && (
                 <li className="mx-2">
                     <a
-                        href={userDetails.unsplash}
+                        href={`${baseLinks.unsplash}${userDetails.unsplash}`}
                         target="_blank"
                         aria-label="Unsplash"
                         rel="noopener noreferrer"
@@ -93,7 +93,7 @@ const SocialLinks = ({ userDetails }) => {
                             xmlns="http://www.w3.org/2000/svg"
                         >
                             <title>Unsplash</title>
-                            <path d="M7.5 6.75V0h9v6.75h-9zm9 3.75H24V24H0V10.5h7.5v6.75h9V10.5z"></path>
+                            <path d="M20.935 5.35c-3.516-1.646-6.498-.095-8.768 2.33-2.509 2.332-4.45 6.253-7.225 7.348C3.027 13.515 2.095 15.287 2.37 17.506c.273 2.219 2.159 3.564 4.616 3.58 3.246.004 7.02-3.22 10.056-5.89 3.036-2.671 6.833-5.326 7.283-8.5.45-3.174-1.235-5.812-4.384-6.245z"></path>
                         </svg>
                     </a>
                 </li>
@@ -101,5 +101,6 @@ const SocialLinks = ({ userDetails }) => {
         </ul>
     );
 };
+
 
 export default SocialLinks;
