@@ -1,14 +1,19 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import UserCard from "./UserCard";
+import AdminProfileEditModal from "./AdminProfileEditModal";
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null); // To store errors, if any
+    const [isModalOpen, toggleModal] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null); // To store the selected user for editing
 
     const handleEdit = (userId) => {
-        console.log("Edit user with ID:", userId);
+        const userToEdit = users.find(user => user._id === userId);
+        setSelectedUser(userToEdit);
+        toggleModal(true);
     };
 
     const handleDelete = (userId) => {
@@ -60,6 +65,11 @@ const UserList = () => {
                     onDelete={() => handleDelete(user._id)}
                     onEdit={() => handleEdit(user._id)} />
             ))}
+            {
+                isModalOpen && selectedUser && (
+                    <AdminProfileEditModal isModalOpen={isModalOpen} toggleModal={() => toggleModal(false)} selectedUser={selectedUser} />
+                )
+            }
         </div>
     )
 }

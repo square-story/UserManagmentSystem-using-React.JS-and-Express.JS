@@ -1,28 +1,26 @@
-// components/ProfileEditModal.js
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateProfileData } from '../../features/profileSlice';
+/* eslint-disable react/prop-types */
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { updateProfileData } from "../../features/profileSlice";
 
-// eslint-disable-next-line react/prop-types
-const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
+const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser }) => {
     const dispatch = useDispatch();
-    const profile = useSelector(state => state.profile.profile);
-    const loading = useSelector(state => state.profile.loading);
-    const error = useSelector(state => state.profile.error);
-    const [editedProfile, setEditedProfile] = useState(profile);
+    const [editedUser, setEditedUser] = useState(selectedUser);
     const [imageFile, setImageFile] = useState(null);
-    const [imagePreview, setImagePreview] = useState(profile.profileImage);
+    const [imagePreview, setImagePreview] = useState(selectedUser.profileImage);
 
-    // Fetch the user details when the modal is opened
+
     useEffect(() => {
-        setEditedProfile(profile);
-        setImagePreview(profile.profileImage ? `http://localhost:5000${profile.profileImage}` : ''); // Set initial preview
-    }, [profile]);
+        setEditedUser(selectedUser);
+        setImagePreview(selectedUser.profileImage ? `http://localhost:5000${selectedUser.profileImage}` : '');
+    }, [selectedUser]);
 
-    const handleModalChange = (e) => {
+
+
+    const handleChange = (e) => {
         const { name, value } = e.target;
-        setEditedProfile({ ...editedProfile, [name]: value });
+        setEditedUser({ ...editedUser, [name]: value });
     };
 
     const handleImageChange = (e) => {
@@ -37,11 +35,11 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
         if (file) reader.readAsDataURL(file); // Show preview
     };
 
-    const handleSaveChanges = async (e) => {
-        e.preventDefault();
-
+    const handleSave = async () => {
+        const errors = validateForm(editedUser);
+        if (Object.keys(errors).length > 0) return;
         try {
-            let uploadedImageUrl = editedProfile.profileImage;
+            let uploadedImageUrl = editedUser.profileImage;
             if (imageFile) {
                 const formData = new FormData();
                 formData.append('image', imageFile);
@@ -55,35 +53,39 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
                 uploadedImageUrl = response.data.imageUrl; // Get the uploaded image URL
             }
 
-            const updatedProfile = { ...editedProfile, profileImage: uploadedImageUrl };
-
-            console.log(uploadedImageUrl)
+            const updatedProfile = { ...editedUser, profileImage: uploadedImageUrl, selectedUser };
 
             // Update the profile in Redux store
             dispatch(updateProfileData(updatedProfile));
-
-            toggleModal(); // Close the modal
+            toggleModal(false); // Close the modal
         } catch (error) {
             console.error('Error saving profile:', error);
         }
+    }
+
+
+    const validateForm = (userData) => {
+        const errors = {};
+        if (!userData.username) errors.username = 'Username is required';
+        if (!userData.email) errors.email = 'Email is required';
+        if (!/\S+@\S+\.\S+/.test(userData.email)) errors.email = 'Email is invalid';
+        return errors;
     };
 
     return (
         isModalOpen && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
                 <div className="bg-white rounded-lg shadow-lg p-5 w-full max-w-lg sm:max-w-md md:max-w-sm max-h-screen overflow-y-auto">
-                    {loading && <p>Loading...</p>}
-                    {error && <p className="text-red-500">Error: {error}</p>}
                     <h2 className="text-2xl font-bold mb-4 text-center">Edit Profile</h2>
-                    <form onSubmit={handleSaveChanges}>
+                    <form >
                         {/* Username Field */}
                         <div className="mb-4">
                             <label className="block text-gray-700">Username</label>
                             <input
                                 type="text"
                                 name="username"
-                                value={editedProfile.username || ''}
-                                onChange={handleModalChange}
+                                value={editedUser.username || ''}
+                                onChange={handleChange}
                                 placeholder="Enter your new username"
                                 className="w-full px-3 py-2 border rounded-lg"
                             />
@@ -95,8 +97,8 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
                             <input
                                 type="email"
                                 name="email"
-                                value={editedProfile.email || ''}
-                                onChange={handleModalChange}
+                                value={editedUser.email || ''}
+                                onChange={handleChange}
                                 placeholder="Enter your new email"
                                 className="w-full px-3 py-2 border rounded-lg"
                             />
@@ -130,8 +132,8 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
                                     <input
                                         type="text"
                                         name={platform.toLowerCase()}
-                                        value={editedProfile[platform.toLowerCase()] || ''}
-                                        onChange={handleModalChange}
+                                        value={editedUser[platform.toLowerCase()] || ''}
+                                        onChange={handleChange}
                                         placeholder={`Enter ${platform} URL`}
                                         className="w-full px-3 py-2 border rounded-lg"
                                     />
@@ -149,7 +151,7 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
                                 Cancel
                             </button>
                             <button
-                                type="submit"
+                                type="button" onClick={handleSave}
                                 className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                             >
                                 Save
@@ -160,7 +162,6 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
             </div>
         )
     );
+}
 
-};
-
-export default ProfileEditModal;
+export default AdminProfileEditModal;

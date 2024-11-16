@@ -2,10 +2,17 @@ const User = require('../models/User');
 
 exports.updateProfile = async (req, res) => {
     try {
-        const { username, email, github, linkedin, twitter, unsplash,profileImage } = req.body;
+        const { username, email, github, linkedin, twitter, unsplash,profileImage,selectedUser } = req.body;
 
         // Find the authenticated user by their ID (from the JWT token)
-        const user = await User.findById(req.user.userId);
+        const userId = req.user?.userId || selectedUser?._id;
+
+        if (!userId) {
+            return res.status(400).json({ message: "No user ID provided" });
+        }
+
+        // Find the user by ID
+        const user = await User.findById(userId);
 
         // Check if the user exists
         if (!user) {
