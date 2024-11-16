@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-// eslint-disable-next-line no-unused-vars
 const UserCard = ({ user, onEdit, onDelete }) => {
     console.log(user.username, 'from UserCard')
     return (
@@ -11,8 +10,8 @@ const UserCard = ({ user, onEdit, onDelete }) => {
                 >
                     <div className="mr-4 grid place-items-center">
                         <img
-                            alt={user?.username}
-                            src="https://docs.material-tailwind.com/img/face-1.jpg"
+                            alt='{user?.username}'
+                            src={user?.profileImage ? `http://localhost:5000${user.profileImage}` : 'https://static.thenounproject.com/png/801397-200.png'}
                             className="relative inline-block h-24 w-24 rounded-full object-cover object-center"
                         />
                     </div>
@@ -21,7 +20,7 @@ const UserCard = ({ user, onEdit, onDelete }) => {
                         <p className="text-slate-500 text-sm">{user.email}</p>
                         <ul className="flex flex-row mt-4">
                             <li className="mx-2">
-                                <a href={'#'} target="_blank" aria-label="GitHub">
+                                <a href={user.github} target="_blank" aria-label="GitHub">
                                     <svg
                                         className="h-6 text-indigo-700 hover:text-indigo-300 transition-transform transform hover:scale-125"
                                         fill="currentColor"
