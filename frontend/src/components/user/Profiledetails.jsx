@@ -1,6 +1,6 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { setUser } from "../../features/authSlice";
 import { setProfile } from "../../features/profileSlice";
 
@@ -8,6 +8,9 @@ const Profiledetails = () => {
     const dispatch = useDispatch();
     let token = localStorage.getItem('token')
     const [localUserDetails, setLocalUserDetails] = useState(null);
+
+    const user = useSelector((state) => state.profile);
+
 
     useEffect(() => {
         const fetchUserDetails = async () => {
@@ -29,7 +32,9 @@ const Profiledetails = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    console.log(localUserDetails, '==userDetails from frontend')
+    useEffect(() => {
+        setLocalUserDetails(user?.profile);
+    }, [user]);
 
     return (<>
         <header className="w-full h-screen px-2 py-4 flex flex-col justify-center items-center text-center bg-gray-900">
