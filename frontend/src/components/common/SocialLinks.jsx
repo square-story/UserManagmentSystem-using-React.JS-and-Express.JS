@@ -23,7 +23,7 @@ const SocialLinks = ({ userDetails }) => {
                         rel="noopener noreferrer"
                     >
                         <svg
-                            className="h-6 text-indigo-700 hover:text-indigo-300 transition-transform transform hover:scale-125"
+                            className="h-6 text-indigo-700 hover:text-indigo-300 hover:scale-125"
                             fill="currentColor"
                             role="img"
                             viewBox="0 0 24 24"
@@ -44,7 +44,7 @@ const SocialLinks = ({ userDetails }) => {
                         rel="noopener noreferrer"
                     >
                         <svg
-                            className="h-6 text-indigo-700 hover:text-indigo-300 transition-transform transform hover:scale-125"
+                            className="h-6 text-indigo-700 hover:text-indigo-300 hover:scale-125"
                             fill="currentColor"
                             role="img"
                             viewBox="0 0 24 24"
@@ -65,7 +65,7 @@ const SocialLinks = ({ userDetails }) => {
                         rel="noopener noreferrer"
                     >
                         <svg
-                            className="h-6 text-indigo-700 hover:text-indigo-300 transition-transform transform hover:scale-125"
+                            className="h-6 text-indigo-700 hover:text-indigo-300 hover:scale-125"
                             fill="currentColor"
                             role="img"
                             viewBox="0 0 24 24"
@@ -86,7 +86,7 @@ const SocialLinks = ({ userDetails }) => {
                         rel="noopener noreferrer"
                     >
                         <svg
-                            className="h-6 text-indigo-700 hover:text-indigo-300 transition-transform transform hover:scale-125"
+                            className="h-6 text-indigo-700 hover:text-indigo-300 hover:scale-125"
                             fill="currentColor"
                             role="img"
                             viewBox="0 0 24 24"
