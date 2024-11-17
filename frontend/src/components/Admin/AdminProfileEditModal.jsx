@@ -2,7 +2,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateProfileData } from "../../features/profileSlice";
+import { setError, updateProfileData } from "../../features/profileSlice";
 import ValidationMessage from "../common/Validation";
 
 const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser }) => {
@@ -78,7 +78,10 @@ const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser }) => {
 
             // Update the profile in Redux store
             dispatch(updateProfileData(updatedProfile));
-            toggleModal(false); // Close the modal
+            if (error.length > 0) {
+                toggleModal(false);
+                dispatch(setError(''))
+            }
         } catch (error) {
             console.error('Error saving profile:', error);
         }

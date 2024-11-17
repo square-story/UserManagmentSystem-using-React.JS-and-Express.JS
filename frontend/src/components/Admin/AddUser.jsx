@@ -2,8 +2,7 @@
 const AddUser = ({ isModalOpen, toggleModal }) => {
 
     // Handle form submission
-    const handleSave = (e) => {
-        e.preventDefault();
+    const handleSave = () => {
     };
     return (
         isModalOpen && (
@@ -68,7 +67,7 @@ const AddUser = ({ isModalOpen, toggleModal }) => {
                                 Cancel
                             </button>
                             <button
-                                type="submit" onClick={handleSave}
+                                onClick={handleSave}
                                 className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                             >
                                 Save

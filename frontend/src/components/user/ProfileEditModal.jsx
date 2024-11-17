@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateProfileData } from '../../features/profileSlice';
+import { setError, updateProfileData } from '../../features/profileSlice';
 
 // eslint-disable-next-line react/prop-types
 const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
@@ -89,12 +89,14 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
 
             const updatedProfile = { ...editedProfile, profileImage: uploadedImageUrl };
 
-            console.log(uploadedImageUrl);
 
             // Update the profile in Redux store
             dispatch(updateProfileData(updatedProfile));
 
-            toggleModal(); // Close the modal
+            if (error.length > 0) {
+                toggleModal(false);
+                dispatch(setError(''))
+            }
         } catch (error) {
             console.error('Error saving profile: FROM FRONT PROFILE EDIT', error);
         }
