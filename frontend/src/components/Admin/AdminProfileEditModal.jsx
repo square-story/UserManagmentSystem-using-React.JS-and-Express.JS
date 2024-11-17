@@ -3,12 +3,14 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { updateProfileData } from "../../features/profileSlice";
+import ValidationMessage from "../common/Validation";
 
 const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser }) => {
     const dispatch = useDispatch();
     const [editedUser, setEditedUser] = useState(selectedUser);
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(selectedUser.profileImage);
+    const [validationErrors, setValidationErrors] = useState({});
 
 
     useEffect(() => {
@@ -26,7 +28,23 @@ const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser }) => {
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         setImageFile(file);
-
+        const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+        if (!validTypes.includes(file.type)) {
+            setValidationErrors((prev) => ({
+                ...prev,
+                profileImage: "Invalid file type. Only JPEG and PNG are allowed.",
+            }));
+            return;
+        }
+        if (file.size > 2 * 1024 * 1024) {
+            setValidationErrors((prev) => ({
+                ...prev,
+                profileImage: "File size exceeds 2MB",
+            }));
+            return;
+        }
+        setImageFile(file);
+        setValidationErrors((prev) => ({ ...prev, profileImage: null })); // Clear previous errors
         const reader = new FileReader();
         reader.onloadend = () => {
             setImagePreview(reader.result); // Preview the selected image
@@ -37,6 +55,7 @@ const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser }) => {
 
     const handleSave = async () => {
         const errors = validateForm(editedUser);
+        setValidationErrors(errors);
         if (Object.keys(errors).length > 0) return;
         try {
             let uploadedImageUrl = editedUser.profileImage;
@@ -66,9 +85,29 @@ const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser }) => {
 
     const validateForm = (userData) => {
         const errors = {};
-        if (!userData.username) errors.username = 'Username is required';
-        if (!userData.email) errors.email = 'Email is required';
-        if (!/\S+@\S+\.\S+/.test(userData.email)) errors.email = 'Email is invalid';
+        const urlRegex = /^(https?:\/\/)?([\w-]+)+([\w-]+)+([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$/;
+
+        // Username Validation
+        if (!userData.username) {
+            errors.username = "Username is required";
+        } else if (userData.username.trim().length < 3) {
+            errors.username = "Username must be at least 3 characters long";
+        }
+
+        // Email Validation
+        if (!userData.email) {
+            errors.email = "Email is required";
+        } else if (!/\S+@\S+\.\S+/.test(userData.email)) {
+            errors.email = "Invalid email format";
+        }
+
+        // Social Media Links Validation
+        ["github", "linkedin", "twitter", "unsplash"].forEach((platform) => {
+            if (userData[platform] && !urlRegex.test(userData[platform])) {
+                errors[platform] = `Invalid ${platform} URL`;
+            }
+        });
+
         return errors;
     };
 
@@ -80,7 +119,9 @@ const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser }) => {
                     <form >
                         {/* Username Field */}
                         <div className="mb-4">
+
                             <label className="block text-gray-700">Username</label>
+
                             <input
                                 type="text"
                                 name="username"
@@ -89,7 +130,9 @@ const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser }) => {
                                 placeholder="Enter your new username"
                                 className="w-full px-3 py-2 border rounded-lg"
                             />
+                            {validationErrors.username && <ValidationMessage message={validationErrors.username} />}
                         </div>
+
 
                         {/* Email Field */}
                         <div className="mb-4">
@@ -102,7 +145,9 @@ const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser }) => {
                                 placeholder="Enter your new email"
                                 className="w-full px-3 py-2 border rounded-lg"
                             />
+                            {validationErrors.email && <ValidationMessage message={validationErrors.email} />}
                         </div>
+
 
                         {/* Profile Image Upload */}
                         <div className="mb-4">
@@ -121,7 +166,9 @@ const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser }) => {
                                     />
                                 </div>
                             )}
+                            {validationErrors.profileImage && <ValidationMessage message={validationErrors.profileImage} />}
                         </div>
+
 
                         {/* Social Media Links */}
                         <div className="mb-4">

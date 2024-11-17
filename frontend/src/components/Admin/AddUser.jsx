@@ -4,7 +4,6 @@ const AddUser = ({ isModalOpen, toggleModal }) => {
     // Handle form submission
     const handleSave = (e) => {
         e.preventDefault();
-        // Perform form validation and submit the new user to the server
     };
     return (
         isModalOpen && (
@@ -18,7 +17,7 @@ const AddUser = ({ isModalOpen, toggleModal }) => {
                             <input
                                 type="text"
                                 name="username"
-                                placeholder="Enter your new username"
+                                placeholder="Enter username"
                                 className="w-full px-3 py-2 border rounded-lg"
                             />
                         </div>
@@ -29,7 +28,7 @@ const AddUser = ({ isModalOpen, toggleModal }) => {
                             <input
                                 type="email"
                                 name="email"
-                                placeholder="Enter your new email"
+                                placeholder="Enter email"
                                 className="w-full px-3 py-2 border rounded-lg"
                             />
                         </div>
