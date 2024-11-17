@@ -81,6 +81,8 @@ const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser }) => {
             if (error.length > 0) {
                 toggleModal(false);
                 dispatch(setError(''))
+            } else {
+                console.log('Updated profile')
             }
         } catch (error) {
             console.error('Error saving profile:', error);

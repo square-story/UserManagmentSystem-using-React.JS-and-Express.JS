@@ -69,7 +69,8 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
     const handleSaveChanges = async (e) => {
         e.preventDefault();
 
-        // Validate form before submission
+        // Clear previous error and validate form
+        dispatch(setError(''));
         if (!validateForm()) return;
 
         try {
@@ -84,23 +85,24 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
                     },
                 });
 
-                uploadedImageUrl = response.data.imageUrl; // Get the uploaded image URL
+                uploadedImageUrl = response.data.imageUrl;
             }
 
             const updatedProfile = { ...editedProfile, profileImage: uploadedImageUrl };
 
-
-            // Update the profile in Redux store
+            // Update Redux store
             dispatch(updateProfileData(updatedProfile));
 
-            if (error.length > 0) {
+            // Close modal on success
+            if (!error) {
                 toggleModal(false);
-                dispatch(setError(''))
             }
-        } catch (error) {
-            console.error('Error saving profile: FROM FRONT PROFILE EDIT', error);
+        } catch (err) {
+            console.error('Error saving profile:', err);
+            dispatch(setError(err.response?.data?.message || 'Something went wrong. Please try again.'));
         }
     };
+
 
     return (
         isModalOpen && (
