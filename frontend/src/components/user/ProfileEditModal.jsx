@@ -13,6 +13,7 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
     const [editedProfile, setEditedProfile] = useState(profile);
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(profile.profileImage);
+    const [formErrors, setFormErrors] = useState({});
 
     // Fetch the user details when the modal is opened
     useEffect(() => {
@@ -37,8 +38,39 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
         if (file) reader.readAsDataURL(file); // Show preview
     };
 
+
+    // Form validation function
+    const validateForm = () => {
+        const errors = {};
+
+        // Username Validation
+        if (!editedProfile.username) {
+            errors.username = "Username is required.";
+        } else if (editedProfile.username.length < 3) {
+            errors.username = "Username must be at least 3 characters.";
+        }
+
+        // Email Validation
+        if (!editedProfile.email) {
+            errors.email = "Email is required.";
+        } else if (!/\S+@\S+\.\S+/.test(editedProfile.email)) {
+            errors.email = "Email is invalid.";
+        }
+
+        // Profile Image Validation (optional)
+        if (imageFile && !['image/jpeg', 'image/png'].includes(imageFile.type)) {
+            errors.image = "Profile image must be in JPEG or PNG format.";
+        }
+
+        setFormErrors(errors);
+        return Object.keys(errors).length === 0; // Return true if no errors
+    };
+
     const handleSaveChanges = async (e) => {
         e.preventDefault();
+
+        // Validate form before submission
+        if (!validateForm()) return;
 
         try {
             let uploadedImageUrl = editedProfile.profileImage;
@@ -57,7 +89,7 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
 
             const updatedProfile = { ...editedProfile, profileImage: uploadedImageUrl };
 
-            console.log(uploadedImageUrl)
+            console.log(uploadedImageUrl);
 
             // Update the profile in Redux store
             dispatch(updateProfileData(updatedProfile));
@@ -87,6 +119,7 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
                                 placeholder="Enter your new username"
                                 className="w-full px-3 py-2 border rounded-lg"
                             />
+                            {formErrors.username && <p className="text-red-500 text-sm">{formErrors.username}</p>}
                         </div>
 
                         {/* Email Field */}
@@ -100,6 +133,7 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
                                 placeholder="Enter your new email"
                                 className="w-full px-3 py-2 border rounded-lg"
                             />
+                            {formErrors.email && <p className="text-red-500 text-sm">{formErrors.email}</p>}
                         </div>
 
                         {/* Profile Image Upload */}
@@ -110,6 +144,7 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
                                 onChange={handleImageChange}
                                 className="w-full px-3 py-2 border rounded-lg"
                             />
+                            {formErrors.image && <p className="text-red-500 text-sm">{formErrors.image}</p>}
                             {imagePreview && (
                                 <div className="mt-4 flex justify-center">
                                     <img
