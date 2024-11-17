@@ -96,7 +96,7 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
 
             toggleModal(); // Close the modal
         } catch (error) {
-            console.error('Error saving profile:', error);
+            console.error('Error saving profile: FROM FRONT PROFILE EDIT', error);
         }
     };
 

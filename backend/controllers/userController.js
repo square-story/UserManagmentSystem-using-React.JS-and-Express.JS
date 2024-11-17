@@ -19,20 +19,11 @@ exports.updateProfile = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Field validations
-        if (username && username.trim().length < 3) {
-            return res.status(400).json({ errors: { username: "Username must be at least 3 characters long" } });
-        }
-
-        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            return res.status(400).json({ errors: { email: "Email format is invalid" } });
-        }
-
         // Check for duplicate email in the database
         if (email && email !== user.email) {
             const emailExists = await User.findOne({ email });
             if (emailExists) {
-                return res.status(400).json({ errors: { email: 'Email is already in use by another user' } });
+                return res.status(400).json({ errors: 'Email is already in use by another user'});
             }
         }
 

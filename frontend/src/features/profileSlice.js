@@ -47,7 +47,8 @@ export const updateProfileData = (updatedProfile) => async (dispatch) => {
     }
     
   } catch (error) {
-    dispatch(setError(error.message)); // Capture error message
+    dispatch(setError(error.response?.data?.errors)); // Capture error message
+    console.log(error.response?.data?.errors)
     console.error('Error updating profile:', error);
   } finally {
     dispatch(setLoading(false)); // Stop loading after the API call

@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateProfileData } from "../../features/profileSlice";
 import ValidationMessage from "../common/Validation";
 
@@ -11,12 +11,14 @@ const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser }) => {
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(selectedUser.profileImage);
     const [validationErrors, setValidationErrors] = useState({});
+    const error = useSelector(state => state.profile.error);
 
 
     useEffect(() => {
         setEditedUser(selectedUser);
         setImagePreview(selectedUser.profileImage ? `http://localhost:5000${selectedUser.profileImage}` : '');
     }, [selectedUser]);
+
 
 
 
@@ -116,6 +118,7 @@ const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser }) => {
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
                 <div className="bg-white rounded-lg shadow-lg p-5 w-full max-w-lg sm:max-w-md md:max-w-sm max-h-screen overflow-y-auto">
                     <h2 className="text-2xl font-bold mb-4 text-center">Edit Profile</h2>
+                    {error && <p className="text-red-500">Error: {error}</p>}
                     <form >
                         {/* Username Field */}
                         <div className="mb-4">
