@@ -30,10 +30,10 @@ exports.updateProfile = async (req, res) => {
         // Update the user fields (only the fields that are provided)
         user.username = username || user.username;
         user.email = email || user.email;
-        user.github = github || user.github;
-        user.linkedin = linkedin || user.linkedin;
-        user.twitter = twitter || user.twitter;
-        user.unsplash = unsplash || user.unsplash;
+        user.github = github;
+        user.linkedin = linkedin;
+        user.twitter = twitter;
+        user.unsplash = unsplash;
         user.profileImage = profileImage || user.profileImage;
 
         // Save the updated user
