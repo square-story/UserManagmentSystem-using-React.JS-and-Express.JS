@@ -27,7 +27,7 @@ const UserList = () => {
         try {
             // Optimistically update the UI
             const updatedUsers = users.filter(user => user._id !== confirmDelete.userId);
-            setUsers(updatedUsers);
+            dispatch(setUsers(updatedUsers));
 
             // Send delete request to the server
             const response = await axios.delete(`http://localhost:5000/api/profile/delete/${confirmDelete.userId}`, {
