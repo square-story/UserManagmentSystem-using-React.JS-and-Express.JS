@@ -4,15 +4,18 @@ import UserCard from "./UserCard";
 import AdminProfileEditModal from "./AdminProfileEditModal";
 import Notification from "../common/Notification";
 import ConfirmationModal from "../common/ConfirmationModal";
+import { useDispatch, useSelector } from "react-redux";
+import { setUsers } from "../../features/adminSlice";
 
 const UserList = () => {
-    const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null); // To store errors, if any
+    const [error, setError] = useState(null);
     const [isModalOpen, toggleModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null); // To store the selected user for editing
     const [notification, setNotification] = useState({ message: '', type: '' });
     const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, userId: null });
+    const dispatch = useDispatch();
+    const users = useSelector(state => state.users.filteredUsers)
 
     const handleEdit = (userId) => {
         const userToEdit = users.find(user => user._id === userId);
@@ -41,7 +44,6 @@ const UserList = () => {
     };
 
     const handleConfirmDelete = (userId) => {
-        console.log(userId, 'from handle conform');
         setConfirmDelete({ isOpen: true, userId });
     };
 
@@ -52,7 +54,7 @@ const UserList = () => {
                 const response = await axios.get('http://localhost:5000/api/profile/getUsers', {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
-                setUsers(response.data);
+                dispatch(setUsers(response.data));
             } catch (error) {
                 setError("Failed to fetch users.");
                 console.error("Error fetching users:", error);
@@ -62,7 +64,7 @@ const UserList = () => {
         };
 
         fetchUsers();
-    }, []);
+    }, [dispatch]);
 
     const handleUserUpdate = (updatedUser) => {
         setUsers((prevUsers) =>

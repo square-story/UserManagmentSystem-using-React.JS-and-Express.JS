@@ -3,11 +3,21 @@ import { useState } from "react";
 import ValidationMessage from "../common/Validation";
 import { useDispatch, useSelector } from "react-redux";
 import { setError } from "../../features/profileSlice";
+import { addUser } from "../../features/adminSlice";
 
 /* eslint-disable react/prop-types */
 const AddUser = ({ isModalOpen, toggleModal }) => {
     const dispatch = useDispatch();
-    const [user, setUser] = useState({});
+    const [user, setUser] = useState({
+        username: '',
+        email: '',
+        password: '',
+        profileImage: '',
+        github: '',
+        linkedin: '',
+        twitter: '',
+        unsplash: '',
+    });
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState('https://static.thenounproject.com/png/801397-200.png');
     const [validationErrors, setValidationErrors] = useState({});
@@ -15,7 +25,7 @@ const AddUser = ({ isModalOpen, toggleModal }) => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setUser({ ...user, [name]: value });
+        setUser((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleClose = () => {
@@ -38,6 +48,7 @@ const AddUser = ({ isModalOpen, toggleModal }) => {
                 alert("Invalid file type. Only JPEG and PNG are allowed.");
                 return;
             }
+            setUser((prev) => ({ ...prev, profileImage: file }));
             setImageFile(file)
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -92,13 +103,15 @@ const AddUser = ({ isModalOpen, toggleModal }) => {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            console.log(response.data?.message, 'response from backend')
-            toggleModal(true)
+            dispatch(addUser(response.data.user)); // Update Redux
+            toggleModal()
         } catch (error) {
             console.error('Error updating profile:', error.response?.data || error.message);
             dispatch(setError(error.response?.data || { message: "An unexpected error occurred." }));
         }
     }
+    if (!isModalOpen) return null;
+
     return (
         isModalOpen && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4" style={{ zIndex: 50, marginLeft: 0 }}>
