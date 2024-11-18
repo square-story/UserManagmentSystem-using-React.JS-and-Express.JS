@@ -55,7 +55,6 @@ exports.createUser = async (req, res) => {
         })
 
         await user.save()
-        console.log(user, 'from backend user creation')
         const savedUser = user.toObject();
         delete savedUser.password;
         return res.status(201).json({ message: "User created successfully.", user: savedUser });
