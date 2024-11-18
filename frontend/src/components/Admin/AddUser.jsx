@@ -1,17 +1,29 @@
 import axios from "axios";
 import { useState } from "react";
+import ValidationMessage from "../common/Validation";
+import { useDispatch, useSelector } from "react-redux";
+import { setError } from "../../features/profileSlice";
 
 /* eslint-disable react/prop-types */
 const AddUser = ({ isModalOpen, toggleModal }) => {
-
+    const dispatch = useDispatch();
     const [user, setUser] = useState({});
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState('https://static.thenounproject.com/png/801397-200.png');
+    const [validationErrors, setValidationErrors] = useState({});
+    const error = useSelector(state => state.profile.error);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setUser({ ...user, [name]: value });
     };
+
+    const handleClose = () => {
+        toggleModal(!isModalOpen)
+
+        dispatch(setError(''))
+        return;
+    }
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -46,15 +58,21 @@ const AddUser = ({ isModalOpen, toggleModal }) => {
         if (!user.password || user.password.length < 6) {
             errors.password = "Password must be at least 6 characters.";
         }
+        if (imageFile && !['image/jpeg', 'image/png'].includes(imageFile.type)) {
+            errors.image = "Profile image must be in JPEG or PNG format.";
+        }
         return errors;
     };
 
-    const handleSave = async () => {
+    const handleSave = async (e) => {
+        e.preventDefault();
         const errors = validateInput();
+        setValidationErrors(errors)
         if (Object.keys(errors).length > 0) {
-            alert("Fix errors before submitting.");
+            console.log('Validation Errors:', errors);
             return;
         }
+        dispatch(setError(''))
         try {
             let uploadedImageUrl = '';
             if (imageFile) {
@@ -67,7 +85,6 @@ const AddUser = ({ isModalOpen, toggleModal }) => {
                     },
                 });
                 uploadedImageUrl = response.data.imageUrl;
-                console.log(uploadedImageUrl, 'from the image url upload part')
             }
             const newUser = { ...user, profileImage: uploadedImageUrl };
             const response = await axios.post('http://localhost:5000/api/profile/newuser', newUser, {
@@ -76,9 +93,10 @@ const AddUser = ({ isModalOpen, toggleModal }) => {
                 }
             });
             console.log(response.data?.message, 'response from backend')
+            toggleModal(true)
         } catch (error) {
-            console.error('Error updating profile:', error);
-            alert('Failed to save user. Please try again.');
+            console.error('Error updating profile:', error.response?.data || error.message);
+            dispatch(setError(error.response?.data || { message: "An unexpected error occurred." }));
         }
     }
     return (
@@ -86,7 +104,8 @@ const AddUser = ({ isModalOpen, toggleModal }) => {
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4" style={{ zIndex: 50, marginLeft: 0 }}>
                 <div className="bg-white rounded-lg shadow-lg p-5 w-full max-w-lg sm:max-w-md md:max-w-sm max-h-screen overflow-y-auto">
                     <h2 className="text-2xl font-bold mb-4 text-center">Add Profile</h2>
-                    <form >
+                    <form onSubmit={handleSave}>
+                        {error && <ValidationMessage message={error.message} />}
                         {/* Username Field */}
                         <div className="mb-4">
                             <label className="block text-gray-700">Username</label>
@@ -98,6 +117,7 @@ const AddUser = ({ isModalOpen, toggleModal }) => {
                                 placeholder="Enter username"
                                 className="w-full px-3 py-2 border rounded-lg"
                             />
+                            {validationErrors.username && <ValidationMessage message={validationErrors.username} />}
                         </div>
 
                         {/* Email Field */}
@@ -111,6 +131,7 @@ const AddUser = ({ isModalOpen, toggleModal }) => {
                                 placeholder="Enter email"
                                 className="w-full px-3 py-2 border rounded-lg"
                             />
+                            {validationErrors.email && <ValidationMessage message={validationErrors.email} />}
                         </div>
                         <div className="mb-4">
                             <label className="block text-gray-700">password</label>
@@ -122,6 +143,7 @@ const AddUser = ({ isModalOpen, toggleModal }) => {
                                 placeholder="Enter password"
                                 className="w-full px-3 py-2 border rounded-lg"
                             />
+                            {validationErrors.password && <ValidationMessage message={validationErrors.password} />}
                         </div>
 
                         {/* Profile Image Upload */}
@@ -141,6 +163,7 @@ const AddUser = ({ isModalOpen, toggleModal }) => {
                                     />
                                 </div>
                             )}
+                            {validationErrors.image && <ValidationMessage message={validationErrors.image} />}
                         </div>
 
                         {/* Social Media Links */}
@@ -165,13 +188,13 @@ const AddUser = ({ isModalOpen, toggleModal }) => {
                         <div className="flex justify-end space-x-4">
                             <button
                                 type="button"
-                                onClick={() => toggleModal(!isModalOpen)}
+                                onClick={handleClose}
                                 className="px-4 py-2 bg-gray-300 rounded-lg"
                             >
                                 Cancel
                             </button>
                             <button
-                                onClick={handleSave}
+                                type="submit"
                                 className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                             >
                                 Save
