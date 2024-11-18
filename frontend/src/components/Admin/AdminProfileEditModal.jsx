@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setError, updateProfile } from "../../features/profileSlice";
 import ValidationMessage from "../common/Validation";
 
-const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser }) => {
+const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser, onUpdateUser }) => {
     const dispatch = useDispatch();
     const [editedUser, setEditedUser] = useState(selectedUser);
     const [imageFile, setImageFile] = useState(null);
@@ -89,6 +89,7 @@ const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser }) => {
 
             // Dispatch updated profile data
             dispatch(updateProfile(response.data.user));
+            onUpdateUser(response.data.user); // Update parent state
 
             // Close the modal
             toggleModal(false);

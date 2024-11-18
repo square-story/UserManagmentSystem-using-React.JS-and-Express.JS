@@ -64,6 +64,15 @@ const UserList = () => {
         fetchUsers();
     }, []);
 
+    const handleUserUpdate = (updatedUser) => {
+        setUsers((prevUsers) =>
+            prevUsers.map((user) =>
+                user._id === updatedUser._id ? updatedUser : user
+            )
+        );
+    };
+
+
     if (loading) {
         return (
             <div className="flex justify-center items-center h-40">
@@ -97,11 +106,15 @@ const UserList = () => {
                     onDelete={() => handleConfirmDelete(user._id)}
                     onEdit={() => handleEdit(user._id)} />
             ))}
-            {
-                isModalOpen && selectedUser && (
-                    <AdminProfileEditModal isModalOpen={isModalOpen} toggleModal={() => toggleModal(false)} selectedUser={selectedUser} />
-                )
-            }
+            {isModalOpen && selectedUser && (
+                <AdminProfileEditModal
+                    isModalOpen={isModalOpen}
+                    toggleModal={() => toggleModal(false)}
+                    selectedUser={selectedUser}
+                    onUpdateUser={handleUserUpdate} // Pass the function as a prop
+                />
+            )}
+
             <ConfirmationModal
                 isOpen={confirmDelete.isOpen}
                 onConfirm={handleDelete}
