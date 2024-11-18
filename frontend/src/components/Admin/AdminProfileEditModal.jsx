@@ -90,7 +90,6 @@ const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser, onUpdat
             // Dispatch updated profile data
             dispatch(updateProfile(response.data.user));
             onUpdateUser(response.data.user); // Update parent state
-
             // Close the modal
             toggleModal(false);
         } catch (error) {

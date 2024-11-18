@@ -2,7 +2,7 @@ import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom'
 import { logout } from '../../features/authSlice';
 import { useState } from 'react';
-import AddUser from './addUser';
+import AddUser from './AddUser';
 import { searchUsers } from '../../features/adminSlice';
 
 const AdminNavBar = () => {
