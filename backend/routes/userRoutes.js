@@ -1,7 +1,7 @@
 const express = require('express');
 const { updateProfile } = require('../controllers/userController');
 const authMiddleware = require('../middleware/authMiddleware'); // Middleware to verify JWT token
-const {getUsers,deleteUser} = require('../controllers/adminController')
+const {getUsers,deleteUser,createUser} = require('../controllers/adminController')
 const multer = require('multer');
 const path = require('path');
 
@@ -39,5 +39,7 @@ router.post('/upload', authMiddleware, upload.single('image'), (req, res) => {
 router.get('/getUsers',authMiddleware,getUsers)
 
 router.delete('/delete/:id',authMiddleware,deleteUser);
+
+router.post('/newuser',authMiddleware,createUser);
 
 module.exports = router;

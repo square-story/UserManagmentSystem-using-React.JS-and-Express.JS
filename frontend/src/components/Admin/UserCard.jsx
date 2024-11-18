@@ -2,7 +2,6 @@ import SocialLinks from "../common/SocialLinks"
 
 /* eslint-disable react/prop-types */
 const UserCard = ({ user, onEdit, onDelete }) => {
-    console.log(user.username, 'from UserCard')
     return (
         <>
             <nav className="flex min-w-[240px] flex-col gap-1 p-1.5">
