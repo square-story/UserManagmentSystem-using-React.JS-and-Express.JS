@@ -2,7 +2,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setError, updateProfileData } from "../../features/profileSlice";
+import { setError, updateProfile } from "../../features/profileSlice";
 import ValidationMessage from "../common/Validation";
 
 const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser }) => {
@@ -58,6 +58,7 @@ const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser }) => {
     const handleSave = async () => {
         const errors = validateForm(editedUser);
         setValidationErrors(errors);
+        dispatch(setError(''));
         if (Object.keys(errors).length > 0) return;
         try {
             let uploadedImageUrl = editedUser.profileImage;
@@ -74,18 +75,29 @@ const AdminProfileEditModal = ({ isModalOpen, toggleModal, selectedUser }) => {
                 uploadedImageUrl = response.data.imageUrl; // Get the uploaded image URL
             }
 
+            // Update profile
             const updatedProfile = { ...editedUser, profileImage: uploadedImageUrl, selectedUser };
+            const response = await axios.put(
+                'http://localhost:5000/api/profile/userdata',
+                updatedProfile,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                }
+            );
 
-            // Update the profile in Redux store
-            dispatch(updateProfileData(updatedProfile));
-            if (error.length > 0) {
-                toggleModal(false);
-                dispatch(setError(''))
-            } else {
-                console.log('Updated profile')
-            }
+            // Dispatch updated profile data
+            dispatch(updateProfile(response.data.user));
+
+            // Close the modal
+            toggleModal(false);
         } catch (error) {
-            console.error('Error saving profile:', error);
+            console.error('Error updating profile:', error);
+
+            // Display backend error message
+            const errorMessage = error.response?.data?.message || 'Something went wrong. Please try again.';
+            dispatch(setError(errorMessage));
         }
     }
 

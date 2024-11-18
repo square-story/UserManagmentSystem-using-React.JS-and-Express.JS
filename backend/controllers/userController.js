@@ -23,7 +23,7 @@ exports.updateProfile = async (req, res) => {
         if (email && email !== user.email) {
             const emailExists = await User.findOne({ email });
             if (emailExists) {
-                return res.status(400).json({ errors: 'Email is already in use by another user'});
+                return res.status(400).json({ message: 'Email is already in use by another user' });
             }
         }
 
@@ -43,7 +43,10 @@ exports.updateProfile = async (req, res) => {
         res.json({ message: 'Profile updated successfully', user });
     } catch (error) {
         console.error('Error updating profile:', error);
-        res.status(500).json({ message: 'Server error' });
+
+        // Return a consistent error response
+        res.status(500).json({ message: 'Something went wrong. Please try again later.' });
     }
 };
+
 

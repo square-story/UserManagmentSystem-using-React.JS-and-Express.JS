@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { setError, updateProfileData } from '../../features/profileSlice';
+import { setError, updateProfile } from '../../features/profileSlice';
 
 // eslint-disable-next-line react/prop-types
 const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
@@ -75,33 +75,51 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
 
         try {
             let uploadedImageUrl = editedProfile.profileImage;
+
+            // Handle image upload
             if (imageFile) {
                 const formData = new FormData();
                 formData.append('image', imageFile);
-                const response = await axios.post('http://localhost:5000/api/profile/upload', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    },
-                });
+                const uploadResponse = await axios.post(
+                    'http://localhost:5000/api/profile/upload',
+                    formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            Authorization: `Bearer ${localStorage.getItem('token')}`,
+                        },
+                    }
+                );
 
-                uploadedImageUrl = response.data.imageUrl;
+                uploadedImageUrl = uploadResponse.data.imageUrl;
             }
 
+            // Update profile
             const updatedProfile = { ...editedProfile, profileImage: uploadedImageUrl };
+            const response = await axios.put(
+                'http://localhost:5000/api/profile/userdata',
+                updatedProfile,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                }
+            );
 
-            // Update Redux store
-            dispatch(updateProfileData(updatedProfile));
+            // Dispatch updated profile data
+            dispatch(updateProfile(response.data.user));
 
-            // Close modal on success
-            if (!error) {
-                toggleModal(false);
-            }
+            // Close the modal
+            toggleModal(false);
         } catch (err) {
-            console.error('Error saving profile:', err);
-            dispatch(setError(err.response?.data?.message || 'Something went wrong. Please try again.'));
+            console.error('Error updating profile:', err);
+
+            // Display backend error message
+            const errorMessage = err.response?.data?.message || 'Something went wrong. Please try again.';
+            dispatch(setError(errorMessage));
         }
     };
+
 
 
     return (
@@ -109,7 +127,7 @@ const ProfileEditModal = ({ isModalOpen, toggleModal }) => {
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
                 <div className="bg-white rounded-lg shadow-lg p-5 w-full max-w-lg sm:max-w-md md:max-w-sm max-h-screen overflow-y-auto">
                     {loading && <p>Loading...</p>}
-                    {error && <p className="text-red-500">Error: {error}</p>}
+                    {error && <p className="text-red-500 mt-2">{error}</p>}
                     <h2 className="text-2xl font-bold mb-4 text-center">Edit Profile</h2>
                     <form onSubmit={handleSaveChanges}>
                         {/* Username Field */}
