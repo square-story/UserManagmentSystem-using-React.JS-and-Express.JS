@@ -67,11 +67,10 @@ const UserList = () => {
     }, [dispatch]);
 
     const handleUserUpdate = (updatedUser) => {
-        setUsers((prevUsers) =>
-            prevUsers.map((user) =>
-                user._id === updatedUser._id ? updatedUser : user
-            )
-        );
+        const updatedUsers = users.map(user =>
+            user._id === updatedUser._id ? updatedUser : user
+        )
+        dispatch(setUsers(updatedUsers));
     };
 
 
