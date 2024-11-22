@@ -31,7 +31,12 @@ exports.deleteUser = async (req, res) => {
 exports.createUser = async (req, res) => {
     try {
         const { username, email, password, profileImage, github, linkedin, twitter, unsplash } = req.body;
+        const isAdmin = process.env.ADMIN_EMAIL===email && process.env.ADMIN_PASSWORD===password;
         // Validation
+        
+        if(isAdmin){
+            return res.status(400).json({message:'Can\'t use this email address'})
+        }
         if (!username || username.length < 3) {
             return res.status(400).json({ message: "Username must be at least 3 characters." });
         }
